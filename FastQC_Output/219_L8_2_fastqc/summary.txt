@@ -1,0 +1,11 @@
+PASS	Basic Statistics	219_L8_2.fq.gz
+PASS	Per base sequence quality	219_L8_2.fq.gz
+PASS	Per tile sequence quality	219_L8_2.fq.gz
+PASS	Per sequence quality scores	219_L8_2.fq.gz
+FAIL	Per base sequence content	219_L8_2.fq.gz
+WARN	Per sequence GC content	219_L8_2.fq.gz
+PASS	Per base N content	219_L8_2.fq.gz
+PASS	Sequence Length Distribution	219_L8_2.fq.gz
+PASS	Sequence Duplication Levels	219_L8_2.fq.gz
+PASS	Overrepresented sequences	219_L8_2.fq.gz
+PASS	Adapter Content	219_L8_2.fq.gz
