@@ -1,0 +1,17 @@
+commit 548f5f96287c025a70fc1b86f3c0ba1b5b779703
+Author: B034333-2019 <no_email_provided>
+Date:   Fri Oct 11 10:16:04 2019 +0100
+
+    Updated runme.sh, ran runme.sh, created bam/sam files
+
+commit 9c17aa56148a054ea85a2e5f527a44ea4687a2b6
+Author: B034333-2019 <no_email_provided>
+Date:   Wed Oct 9 07:07:14 2019 +0100
+
+    committing existing docs
+
+commit 2dfe5f120af02e72eb86ce2144b73fe2c91a1f84
+Author: B034333-2019 <no_email_provided>
+Date:   Sun Oct 6 16:37:36 2019 +0100
+
+    Initial commit without large files
