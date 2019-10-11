@@ -12,7 +12,7 @@ fastqc_output_dir="/localdisk/home/s1239445/Assignment/Assignment1/FastQC_Output
 #more $fastqc_sample_file
 
 #moving to sample directory 
-#cd $sample_file_dir
+cd $sample_file_dir
 
 #Run fastqc into $fastqc_output_dir with 8 threads to speed up simultaneous file creation, leaving output files unzipped
 #echo -e "Fastqc running..."
@@ -34,23 +34,24 @@ tbb_genome_database="/localdisk/home/s1239445/Assignment/Assignment1/TBB_Databas
 #PART THREE - CREATE GENOME DATABASE
 
 #unzip TBB fasta genome file 
+#echo -e "unzipping TTB raw data using gzip..."
 #gzip -d "/localdisk/home/s1239445/Assignment/Assignment1/TBB_Database/Tb927_genome.fasta"
 
 #build Bowtie2 index database using bowtie2-build
+#echo e- "building indexed database using bowtie2-build..."
 #bowtie2-build -f $tbb_genome_unzipped $tbb_genome_database 
 
 #PART FOUR - ALIGN PAIRED SEQUENCES WITH INDEX
 
 #VARIABLES
 sam_bam_output_dir="/localdisk/home/s1239445/Assignment/Assignment1/SAM_BAM_Output"
-#sample_file_dir - where the .gz zip files for the paired reads are
 
 #create output SAM files
 #cd $sam_bam_output_dir
 #touch 216_slender.sam 218_slender.sam 219_slender.sam 220_stumpy.sam 221_stumpy.sam 222_stumpy.sam sam_bam_output_216.sam sam_bam_output_218.sam sam_bam_output_219.sam sam_bam_output_220.sam sam_bam_output_221.sam sam_bam_output_222.sam
 
 #run bowtie2
-#echo -e- "bowtie2 running"
+#echo -e- "bowtie2 running, aligning read pairs..."
 #bowtie2 -x $tbb_genome_database -1 $sample_file_dir/216_L8_1.fq.gz -2 $sample_file_dir/216_L8_2.fq.gz -S $sam_bam_output_dir/sam_bam_output_216.sam
 #bowtie2 -x $tbb_genome_database -1 $sample_file_dir/218_L8_1.fq.gz -2 $sample_file_dir/218_L8_2.fq.gz -S $sam_bam_output_dir/sam_bam_output_218.sam
 #bowtie2 -x $tbb_genome_database -1 $sample_file_dir/219_L8_1.fq.gz -2 $sample_file_dir/219_L8_2.fq.gz -S $sam_bam_output_dir/sam_bam_output_219.sam
@@ -77,30 +78,37 @@ sam_bam_output_dir="/localdisk/home/s1239445/Assignment/Assignment1/SAM_BAM_Outp
 #samtools sort $sam_bam_output_dir/bam_output_222.bam -o $sam_bam_output_dir/bam_output_222_sorted.bam
 
 #index BAM files
-#echo -e "samtools indexing sorted BAM files"
-#samtools index $sam_bam_output_dir/bam_output_216_sorted.bam $sam_bam_output_dir/bam_output_indexed_216.bam
-#samtools index $sam_bam_output_dir/bam_output_218_sorted.bam $sam_bam_output_dir/bam_output_indexed_218.bam
-#samtools index $sam_bam_output_dir/bam_output_219_sorted.bam $sam_bam_output_dir/bam_output_indexed_219.bam
-#samtools index $sam_bam_output_dir/bam_output_220_sorted.bam $sam_bam_output_dir/bam_output_indexed_220.bam
-#samtools index $sam_bam_output_dir/bam_output_221_sorted.bam $sam_bam_output_dir/bam_output_indexed_221.bam
-#samtools index $sam_bam_output_dir/bam_output_222_sorted.bam $sam_bam_output_dir/bam_output_indexed_222.bam
+echo -e "samtools indexing sorted BAM files"
+samtools index $sam_bam_output_dir/bam_output_216_sorted.bam 
+samtools index $sam_bam_output_dir/bam_output_218_sorted.bam
+samtools index $sam_bam_output_dir/bam_output_219_sorted.bam 
+samtools index $sam_bam_output_dir/bam_output_220_sorted.bam 
+samtools index $sam_bam_output_dir/bam_output_221_sorted.bam 
+samtools index $sam_bam_output_dir/bam_output_222_sorted.bam 
 
 #PART FIVE - GENERATE COUNTS DATA
 
 #VARIABLES
 tbb_bedfile="/localdisk/data/BPSM/Assignment1/Tbbgenes.bed"
 bedfile_output_dir="/localdisk/home/s1239445/Assignment/Assignment1/Bedtools_Output/"
+slender_output="/localdisk/home/s1239445/Assignment/Assignment1/Bedtools_Output/final_output_slender.txt"
+stumpy_output="/localdisk/home/s1239445/Assignment/Assignment1/Bedtools_Output/final_output_stumpy.txt"
 
 #run bedtools
-echo -e "bedtools running..."
+echo -e "bedtools multicov running..."
 
 #output for slender reads
+bedtools multicov -bams $sam_bam_output_dir/bam_output_216_sorted.bam $sam_bam_output_dir/bam_output_218_sorted.bam $sam_bam_output_dir/bam_output_219_sorted.bam -bed $tbb_bedfile  > $bedfile_output_dir/final_output_slender.txt	
+
 #bedtools multicov -bams $sam_bam_output_dir/bam_output_216_sorted.bam -bed $tbb_bedfile > $bedfile_output_dir/final_output_216.txt
+
 #bedtools multicov -bams $sam_bam_output_dir/bam_output_218_sorted.bam -bed $tbb_bedfile > $bedfile_output_dir/final_output_218.txt
 #bedtools multicov -bams $sam_bam_output_dir/bam_output_219_sorted.bam -bed $tbb_bedfile > $bedfile_output_dir/final_output_219.txt
 
 #output for stumpy reads
-#bedtools multicov -bams $sam_bam_output_dir/bam_output_220_sorted.bam -bed $tbb_bedfile > $bedfile_output_dir/final_output_220.txt
+bedtools multicov -bams $sam_bam_output_dir/bam_output_220_sorted.bam $sam_bam_output_dir/bam_output_221_sorted.bam $sam_bam_output_dir/bam_output_222_sorted.bam  -bed $tbb_bedfile > $bedfile_output_dir/final_output_stumpy.txt
+
 #bedtools multicov -bams $sam_bam_output_dir/bam_output_221_sorted.bam -bed $tbb_bedfile > $bedfile_output_dir/final_output_221.txt
 #bedtools multicov -bams $sam_bam_output_dir/bam_output_222_sorted.bam -bed $tbb_bedfile > $bedfile_output_dir/final_output_222.txt
 
+echo -e "bedtools done..."
