@@ -33,6 +33,7 @@ tbb_genome_database="/localdisk/home/s1239445/Assignment/Assignment1/TBB_Databas
 #unzip TBB fasta genome file
 echo -e "unzipping TTB raw data using gzip..."
 gzip -d "/localdisk/home/s1239445/Assignment/Assignment1/TBB_Database/Tb927_genome.fasta"
+#gzip -d "/localdisk/data/BPSM/Assignment1/Tbb_genome/Tb927_genome.fasta.gz"
 
 #build Bowtie2 index database using bowtie2-build
 echo e- "building indexed database using bowtie2-build..."
@@ -42,10 +43,6 @@ bowtie2-build -f $tbb_genome_unzipped $tbb_genome_database
 
 #VARIABLES
 sam_bam_output_dir="/localdisk/home/s1239445/Assignment/Assignment1/SAM_BAM_Output"
-
-#create output SAM files
-#cd $sam_bam_output_dir
-#touch 216_slender.sam 218_slender.sam 219_slender.sam 220_stumpy.sam 221_stumpy.sam 222_stumpy.sam sam_bam_output_216.sam sam_bam_output_218.sam sam_bam_output_219.sam sam_bam_output_220.sam sam_bam_output_221.sam sam_bam_output_222.sam
 
 #run bowtie2
 echo -e- "bowtie2 running, aligning read pairs..."
@@ -57,7 +54,7 @@ bowtie2 -x $tbb_genome_database -1 $sample_file_dir/221_L8_1.fq.gz -2 $sample_fi
 bowtie2 -x $tbb_genome_database -1 $sample_file_dir/222_L8_1.fq.gz -2 $sample_file_dir/222_L8_2.fq.gz -S $sam_bam_output_dir/sam_bam_output_222.sam
 
 #convert SAM to BAM format
-echo -e "samtools converting SAM to BAM files"
+echo -e "samtools converting SAM to BAM files..."
 samtools view -S -b $sam_bam_output_dir/sam_bam_output_216.sam > $sam_bam_output_dir/bam_output_216.bam
 samtools view -S -b $sam_bam_output_dir/sam_bam_output_218.sam > $sam_bam_output_dir/bam_output_218.bam
 samtools view -S -b $sam_bam_output_dir/sam_bam_output_219.sam > $sam_bam_output_dir/bam_output_219.bam
@@ -66,7 +63,7 @@ samtools view -S -b $sam_bam_output_dir/sam_bam_output_221.sam > $sam_bam_output
 samtools view -S -b $sam_bam_output_dir/sam_bam_output_222.sam > $sam_bam_output_dir/bam_output_222.bam
 
 #sort BAM files
-echo -e "samtools sorting BAM files"
+echo -e "samtools sorting BAM files..."
 samtools sort $sam_bam_output_dir/bam_output_216.bam -o $sam_bam_output_dir/bam_output_216_sorted.bam
 samtools sort $sam_bam_output_dir/bam_output_218.bam -o $sam_bam_output_dir/bam_output_218_sorted.bam
 samtools sort $sam_bam_output_dir/bam_output_219.bam -o $sam_bam_output_dir/bam_output_219_sorted.bam
@@ -75,7 +72,7 @@ samtools sort $sam_bam_output_dir/bam_output_221.bam -o $sam_bam_output_dir/bam_
 samtools sort $sam_bam_output_dir/bam_output_222.bam -o $sam_bam_output_dir/bam_output_222_sorted.bam
 
 #index BAM files
-echo -e "samtools indexing sorted BAM files"
+echo -e "samtools indexing sorted BAM files..."
 samtools index $sam_bam_output_dir/bam_output_216_sorted.bam 
 samtools index $sam_bam_output_dir/bam_output_218_sorted.bam
 samtools index $sam_bam_output_dir/bam_output_219_sorted.bam 
@@ -113,4 +110,11 @@ awk '{sum = $7 + $8 + $9; avg = sum / 3; print $4"\t"avg}' $bedfile_output_dir/f
 #Summing bedtools multicov output to give average of three stumpy sequences
 awk '{sum = $7 + $8 + $9; avg = sum / 3;  print $4"\t"avg}' $bedfile_output_dir/final_output_stumpy.txt > $final_output_dir/stumpy_mean_final_output.txt
  
-echo - "Final Gene names and Average Counts for slender and stumpy sequences can be found in: $final_output_dir"
+#COMBINING FINAL SLENDER AND STUMPY FILES
+
+#VARIABLES
+slender_final=$final_output_dir/slender_mean_final_output.txt
+stumpy_final=$final_output_dir/stumpy_mean_final_output.txt
+
+paste $slender_final $stumpy_final | awk '{print $1"\t"$2"\t"$4}' > $final_output_dir/FINAL_MEAN_SAMPLE_OUTPUTS.txt
+echo -e "Final output file found in $final_output_dir/FINAL_MEAN_SAMPLE_OUTPUTS.txt" 
